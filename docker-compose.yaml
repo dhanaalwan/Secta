@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.6
+    volumes:
+      - ./scripts/new_sistem_ta.sql:/docker-entrypoint-initdb.d/new_sistem_ta.sql
+      - ./db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: new_sistem_ta
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+
+  ciapp:
+    build: .
+    volumes: 
+      - ./ciapp:/var/www/html/
+    depends_on:
+       - db
+    restart: always
+    links:
+      - db:mysql
+    ports:
+      - "8000:80"
+
+volumes:
+    db_data:
